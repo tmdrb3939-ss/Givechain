@@ -10,6 +10,14 @@ contract SimpleDonation {
     uint256 public totalDonated;
     mapping(address => uint256) public donations;
 
+    struct Donation {
+        address donor;
+        uint256 amount;
+        uint64 timestamp;
+    }   
+
+    Donation[] public history;
+
     bool private locked;
 
     event Donated(address indexed donor, uint256 amount);
@@ -72,6 +80,13 @@ contract SimpleDonation {
         donations[msg.sender] += msg.value;
         totalDonated += msg.value;
 
+        history.push(
+            Donation({
+                donor: msg.sender,
+                amount: msg.value,
+                timestamp: uint64(block.timestamp)
+            })
+        );
         emit Donated(msg.sender, msg.value);
     }
 
